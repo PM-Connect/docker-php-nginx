@@ -74,7 +74,7 @@ php-fpm --nodaemonize & running_pids+=( $! )
 
 echo ""
 
-#nginx & running_pids+=( $! )
+nginx & running_pids+=( $! )
 
 echo ""
 
