@@ -1,6 +1,10 @@
 FROM php:7.1-fpm-alpine
 
-RUN apk update && apk --no-cache add nginx bash libmcrypt-dev && rm -rf /usr/local/etc/php-fpm.d/* && docker-php-ext-install opcache mcrypt
+RUN apk update && \
+    apk --no-cache add nginx bash libmcrypt-dev && \
+    rm -rf /usr/local/etc/php-fpm.d/* && \
+    rm -rf /etc/nginx/conf.d && \
+    docker-php-ext-install opcache mcrypt
 
 COPY ./nginx.conf /etc/nginx/
 COPY ./site.conf  /etc/nginx/sites-available/
