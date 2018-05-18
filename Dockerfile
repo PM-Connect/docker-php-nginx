@@ -19,11 +19,11 @@ RUN mkdir -p /var/run/php && \
     mkdir /etc/php/7.2/fpm/env.d && \
     touch /etc/php/7.2/fpm/env.d/docker
 
-COPY --chown=www-data:www-data ./startup.php /var/app/public/index.php
+COPY ./startup.php /var/app/public/index.php
 
-COPY --chown=root ./entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /entrypoint.sh
+RUN chown root ./entrypoint.sh && chown -R www-data:www-data /var/app/public/index.php && chmod +x /entrypoint.sh
 
 WORKDIR /var/app
 
