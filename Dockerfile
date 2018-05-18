@@ -23,7 +23,7 @@ COPY ./startup.php /var/app/public/index.php
 
 COPY ./entrypoint.sh /entrypoint.sh
 
-RUN chown root ./entrypoint.sh && chown -R www-data:www-data /var/app/public/index.php && chmod +x /entrypoint.sh
+RUN chown root /entrypoint.sh && chown -R www-data:www-data /var/app/public/index.php && chmod +x /entrypoint.sh
 
 WORKDIR /var/app
 
