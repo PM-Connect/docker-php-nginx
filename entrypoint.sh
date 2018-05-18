@@ -27,7 +27,7 @@ NGINX_ERROR_PATH="/var/log/nginx/app_error.log"
 if [ ! -z ${PHP_ENV_PATH+x} ]; then
   if [ -f "$PHP_ENV_PATH" ]; then
     echo "Adding PHP env variables..."
-    cp "$PHP_ENV_PATH" /etc/php/7.1/fpm/env.d/env
+    cp "$PHP_ENV_PATH" /etc/php/7.2/fpm/env.d/env
   fi
 fi
 
