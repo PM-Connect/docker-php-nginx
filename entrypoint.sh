@@ -65,30 +65,35 @@ if [ ! -z ${DEPLOYMENT_SCRIPT_PATH+x} ]; then
   fi
 fi
 
-# Capture the nginx and php pids for monitoring.
-running_pids=( )
+if [ ! -z $@+x ]; then
+  set -- php "$@"
+  exec "$@"
+else
+  # Capture the nginx and php pids for monitoring.
+  running_pids=( )
 
-echo ""
+  echo ""
 
-php-fpm --nodaemonize & running_pids+=( $! )
+  php-fpm --nodaemonize & running_pids+=( $! )
 
-echo ""
+  echo ""
 
-nginx & running_pids+=( $! )
+  nginx & running_pids+=( $! )
 
-echo ""
+  echo ""
 
-echo ""
-echo "Monitoring php-fpm and nginx processes and exiting on failures (${running_pids[@]})..."
-echo ""
+  echo ""
+  echo "Monitoring php-fpm and nginx processes and exiting on failures (${running_pids[@]})..."
+  echo ""
 
-# Monitor php and nginx and if either exit, stop the container.
-while (( ${#running_pids[@]} )); do
-  for pid_idx in "${!running_pids[@]}"; do
-    pid=${running_pids[$pid_idx]}
-    if ! kill -0 "$pid" 2>/dev/null; then
-      exit
-    fi
+  # Monitor php and nginx and if either exit, stop the container.
+  while (( ${#running_pids[@]} )); do
+    for pid_idx in "${!running_pids[@]}"; do
+      pid=${running_pids[$pid_idx]}
+      if ! kill -0 "$pid" 2>/dev/null; then
+        exit
+      fi
+    done
+    sleep 0.2
   done
-  sleep 0.2
-done
+fi
