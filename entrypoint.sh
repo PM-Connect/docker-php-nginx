@@ -31,6 +31,13 @@ if [ ! -z ${PHP_ENV_PATH+x} ]; then
   fi
 fi
 
+if [ ! -z ${PHP_FPM_LOG_PATH}+x ]; then
+  echo "Setting php fpm log path..."
+  echo "php_flag[display_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
+  echo "php_admin_value[error_log] = $PHP_FPM_LOG_PATH" >> /usr/local/etc/php-fpm.d/www.conf
+  echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
+fi
+
 if [ ! -z ${NGINX_DOCUMENT_ROOT+x} ]; then
   echo "Changing nginx document root..."
   sed -i "s#/var/app/public#$NGINX_DOCUMENT_ROOT#g" /etc/nginx/sites-available/site.conf
@@ -65,7 +72,7 @@ if [ ! -z ${DEPLOYMENT_SCRIPT_PATH+x} ]; then
   fi
 fi
 
-if [ ! -z $@+x ]; then
+if [ ! -z "$@" ]; then
   set -- php "$@"
   exec "$@"
 else
