@@ -64,10 +64,21 @@ if [ ! -z ${NGINX_APP_RESPONSE_FILE+x} ]; then
   sed -i "s#/var/log/nginx/app_responses.log#$NGINX_APP_RESPONSE_FILE#g" /etc/nginx/sites-available/site.conf
 fi
 
+if [ ! -z ${NGINX_APP_RESPONSE_FILE+x} ]; then
+  echo "Changing nginx response path..."
+  sed -i "s#/var/log/nginx/app_responses.log#$NGINX_APP_RESPONSE_FILE#g" /etc/nginx/sites-available/site.conf
+fi
+
+if [ ! -z ${NGINX_GENERAL_TIMEOUT_SECONDS+x} ]; then
+  echo "Changing nginx response path..."
+  sed -ri "s#(.*)_timeout [0-9]+s;#\1_timeout ${NGINX_GENERAL_TIMEOUT_SECONDS}s;#g" /etc/nginx/sites-available/site.conf
+fi
+
 if [ ! -z ${PHP_UPLOAD_SIZE_MAX_MB+x} ]; then
   echo "Changing max upload and post size..."
   sed -i "s#post_max_size=[0-9]+M#post_max_size=${PHP_UPLOAD_SIZE_MAX_MB}M#g" /usr/local/etc/php/php.ini
   sed -i "s#upload_max_filesize=[0-9]+M#post_max_size=${PHP_UPLOAD_SIZE_MAX_MB}M#g" /usr/local/etc/php/php.ini
+  sed -i "s#client_max_body_size [0-9]+m;#client_max_body_size ${PHP_UPLOAD_SIZE_MAX_MB}m;#g" /etc/nginx/sites-available/site.conf
 fi
 
 if [ ! -z ${DEPLOYMENT_SCRIPT_PATH+x} ]; then
