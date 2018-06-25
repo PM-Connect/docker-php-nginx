@@ -19,10 +19,7 @@ RUN mkdir -p /var/run/php && \
     chown -R www-data:www-data /var/app && \
     chown -R www-data:www-data /var/tmp/nginx && \
     ln -s /etc/nginx/sites-available/site.conf /etc/nginx/sites-enabled/site && \
-    mkdir /etc/php && \
-    mkdir /etc/php/7.2 && \
-    mkdir /etc/php/7.2/fpm && \
-    mkdir /etc/php/7.2/fpm/env.d && \
+    mkdir -p /etc/php/7.2/fpm/env.d && \
     touch /etc/php/7.2/fpm/env.d/docker
 
 COPY ./startup.php /var/app/public/index.php
