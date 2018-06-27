@@ -31,6 +31,13 @@ if [ ! -z ${PHP_ENV_PATH+x} ]; then
   fi
 fi
 
+if [ ! -z ${PHP_FPM_LOG_PATH}+x ]; then
+  echo "Setting php fpm log path..."
+  echo "php_flag[display_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
+  echo "php_admin_value[error_log] = $PHP_FPM_LOG_PATH" >> /usr/local/etc/php-fpm.d/www.conf
+  echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
+fi
+
 if [ ! -z ${NGINX_DOCUMENT_ROOT+x} ]; then
   echo "Changing nginx document root..."
   sed -i "s#/var/app/public#$NGINX_DOCUMENT_ROOT#g" /etc/nginx/sites-available/site.conf
@@ -57,6 +64,28 @@ if [ ! -z ${NGINX_APP_RESPONSE_FILE+x} ]; then
   sed -i "s#/var/log/nginx/app_responses.log#$NGINX_APP_RESPONSE_FILE#g" /etc/nginx/sites-available/site.conf
 fi
 
+if [ ! -z ${NGINX_APP_RESPONSE_FILE+x} ]; then
+  echo "Changing nginx response path..."
+  sed -i "s#/var/log/nginx/app_responses.log#$NGINX_APP_RESPONSE_FILE#g" /etc/nginx/sites-available/site.conf
+fi
+
+if [ ! -z ${NGINX_GENERAL_TIMEOUT_SECONDS+x} ]; then
+  echo "Changing nginx response path..."
+  sed -ri "s#(.*)_timeout [0-9]+s;#\1_timeout ${NGINX_GENERAL_TIMEOUT_SECONDS}s;#g" /etc/nginx/sites-available/site.conf
+fi
+
+if [ ! -z ${PHP_UPLOAD_SIZE_MAX_MB+x} ]; then
+  echo "Changing max upload and post size..."
+  sed -ri "s#post_max_size=[0-9]+M#post_max_size=${PHP_UPLOAD_SIZE_MAX_MB}M#g" /usr/local/etc/php/php.ini
+  sed -ri "s#upload_max_filesize=[0-9]+M#upload_max_filesize=${PHP_UPLOAD_SIZE_MAX_MB}M#g" /usr/local/etc/php/php.ini
+  sed -ri "s#client_max_body_size [0-9]+m;#client_max_body_size ${PHP_UPLOAD_SIZE_MAX_MB}m;#g" /etc/nginx/sites-available/site.conf
+fi
+
+if [ ! -z ${PHP_OPCACHE_VALIDATE_TIMESTAMPS+x} ]; then
+  echo "Enabling opcache timestamp validation..."
+  sed -ri "#opcache.validate_timestamps=0#opcache.validate_timestamps=1#g" /usr/local/etc/php/php.ini
+fi
+
 if [ ! -z ${DEPLOYMENT_SCRIPT_PATH+x} ]; then
   if [ -f "$DEPLOYMENT_SCRIPT_PATH" ]; then
     echo "Making deployment up script executable..."
@@ -65,7 +94,7 @@ if [ ! -z ${DEPLOYMENT_SCRIPT_PATH+x} ]; then
   fi
 fi
 
-if [ ! -z $@+x ]; then
+if [ ! -z "$@" ]; then
   set -- php "$@"
   exec "$@"
 else
