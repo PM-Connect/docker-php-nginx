@@ -81,6 +81,11 @@ if [ ! -z ${PHP_UPLOAD_SIZE_MAX_MB+x} ]; then
   sed -ri "s#client_max_body_size [0-9]+m;#client_max_body_size ${PHP_UPLOAD_SIZE_MAX_MB}m;#g" /etc/nginx/sites-available/site.conf
 fi
 
+if [ ! -z ${PHP_OPCACHE_VALIDATE_TIMESTAMPS+x} ]; then
+  echo "Enabling opcache timestamp validation..."
+  sed -ri "#opcache.validate_timestamps=0#opcache.validate_timestamps=1#g" /usr/local/etc/php/php.ini
+fi
+
 if [ ! -z ${DEPLOYMENT_SCRIPT_PATH+x} ]; then
   if [ -f "$DEPLOYMENT_SCRIPT_PATH" ]; then
     echo "Making deployment up script executable..."
