@@ -83,7 +83,7 @@ fi
 
 if [ ! -z ${PHP_OPCACHE_VALIDATE_TIMESTAMPS+x} ]; then
   echo "Enabling opcache timestamp validation..."
-  sed -ri "#opcache.validate_timestamps=0#opcache.validate_timestamps=1#g" /usr/local/etc/php/php.ini
+  sed -i "s#opcache.validate_timestamps=0#opcache.validate_timestamps=1#g" /usr/local/etc/php/php.ini
 fi
 
 if [ ! -z ${DEPLOYMENT_SCRIPT_PATH+x} ]; then
