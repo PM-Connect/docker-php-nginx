@@ -83,7 +83,12 @@ fi
 
 if [ ! -z ${PHP_OPCACHE_VALIDATE_TIMESTAMPS+x} ]; then
   echo "Enabling opcache timestamp validation..."
-  sed -i "s#opcache.validate_timestamps=0#opcache.validate_timestamps=1#g" /usr/local/etc/php/php.ini
+  sed -ri "s#opcache.validate_timestamps=0#opcache.validate_timestamps=1#g" /usr/local/etc/php/php.ini
+fi
+
+if [ ! -z ${PHP_MEMORY_LIMIT+x} ]; then
+  echo "Setting php memory limit..."
+  sed -ri "s#memory_limit = [0-9]+M#memory_limit = ${PHP_MEMORY_LIMIT}M#g" /usr/local/etc/php/php.ini
 fi
 
 if [ ! -z ${DEPLOYMENT_SCRIPT_PATH+x} ]; then
