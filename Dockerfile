@@ -1,7 +1,7 @@
 FROM php:7.2-fpm-alpine
 
 RUN apk update && \
-    apk --no-cache add nginx bash libmcrypt-dev && \
+    apk --no-cache add shadow nginx bash libmcrypt-dev && \
     rm -rf /usr/local/etc/php-fpm.d/* && \
     rm -rf /etc/nginx/conf.d && \
     docker-php-ext-install opcache

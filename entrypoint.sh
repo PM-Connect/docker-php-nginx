@@ -20,6 +20,18 @@ php -v
 
 echo ""
 
+if [ ! -z ${USER_ID+x} ] && [ ! "$USER_ID" == "0" ]; then
+  echo "Changing www-data user id..."
+  usermod -u $USER_ID www-data
+fi
+
+if [ ! -z ${GROUP_ID+x} ] && [ ! "GROUP_ID" == "0" ]; then
+  echo "Changing www-data group id..."
+  groupmod -g $GROUP_ID www-data
+fi
+
+chown -R www-data:www-data /var/app
+
 NGINX_ERROR_PATH="/var/log/nginx/app_error.log"
 
 if [ ! -z ${PHP_ENV_PATH+x} ]; then
