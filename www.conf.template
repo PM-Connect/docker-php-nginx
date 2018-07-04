@@ -1,5 +1,4 @@
 [www]
-;prefix = /path/to/pools/$pool
 user = www-data
 group = www-data
 listen = /var/run/php/php7.2-fpm.sock
@@ -7,21 +6,18 @@ listen.owner = www-data
 listen.group = www-data
 
 pm = dynamic
-pm.max_children = 15
-pm.start_servers = 5
-pm.min_spare_servers = 5
-pm.max_spare_servers = 10
-pm.max_requests = 200
+pm.max_children = ${PHP_FPM_PM_MAX_CHILDREN}
+pm.start_servers = ${PHP_FPM_PM_START_SERVERS}
+pm.min_spare_servers = ${PHP_FPM_PM_MIN_SPARE_SERVERS}
+pm.max_spare_servers = ${PHP_FPM_PM_MAX_SPARE_SERVERS}
+pm.max_requests = ${PHP_FPM_PM_MAX_REQUESTS}
 
 rlimit_files = 4096
 rlimit_core = 0
 chdir = /var/app
 clear_env = no
 
-include=/etc/php/7.2/fpm/env.d/*
-
 catch_workers_output = yes
 
 php_flag[display_errors] = on
-php_admin_value[error_log] = /var/log/fpm-php.www.log
 php_admin_flag[log_errors] = on

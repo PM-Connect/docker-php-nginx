@@ -20,6 +20,57 @@ php -v
 
 echo ""
 
+export APPLICATION_ROOT="/var/app"
+
+export NGINX_SERVER_ROOT="${NGINX_SERVER_ROOT:-${APPLICATION_ROOT}/public}"
+export NGINX_SERVER_INDEX="${NGINX_SERVER_INDEX:-index.php}"
+export NGINX_CLIENT_MAX_BODY_SIZE="${NGINX_CLIENT_MAX_BODY_SIZE:-8m}"
+
+export NGINX_DEFAULT_TIMEOUT="${NGINX_DEFAULT_TIMEOUT:-60s}"
+export NGINX_CLIENT_HEADER_TIMEOUT="${NGINX_CLIENT_HEADER_TIMEOUT:-${NGINX_DEFAULT_TIMEOUT}}"
+export NGINX_CLIENT_BODY_TIMEOUT="${NGINX_CLIENT_BODY_TIMEOUT:-${NGINX_DEFAULT_TIMEOUT}}"
+export NGINX_SEND_TIMEOUT="${NGINX_SEND_TIMEOUT:-${NGINX_DEFAULT_TIMEOUT}}"
+export NGINX_PROXY_CONNECT_TIMEOUT="${NGINX_PROXY_CONNECT_TIMEOUT:-${NGINX_DEFAULT_TIMEOUT}}"
+export NGINX_PROXY_SEND_TIMEOUT="${NGINX_PROXY_SEND_TIMEOUT:-${NGINX_DEFAULT_TIMEOUT}}"
+export NGINX_PROXY_READ_TIMEOUT="${NGINX_PROXY_READ_TIMEOUT:-${NGINX_DEFAULT_TIMEOUT}}"
+
+export NGINX_FASTCGI_READ_TIMEOUT="${NGINX_FASTCGI_READ_TIMEOUT:-300}"
+export NGINX_FASTCGI_IGNORE_CLIENT_ABORT="${NGINX_FASTCGI_IGNORE_CLIENT_ABORT:-on}"
+
+export NGINX_ERROR_LOG="${NGINX_ERROR_LOG:-/var/log/nginx/app_error.log}"
+export NGINX_ACCESS_LOG="${NGINX_ERROR_LOG:-/var/log/nginx/app_access.log}"
+
+export NGINX_EXPIRES_HTML="${NGINX_EXPIRES_HTML:-epoch}"
+export NGINX_EXPIRES_CSS="${NGINX_EXPIRES_CSS:-7d}"
+export NGINX_EXPIRES_JS="${NGINX_EXPIRES_JS:-7d}"
+export NGINX_EXPIRES_IMAGES="${NGINX_EXPIRES_IMAGES:-7d}"
+
+export PHP_POST_MAX_SIZE="${PHP_POST_MAX_SIZE:-8M}"
+export PHP_UPLOAD_MAX_FILESIZE="${PHP_UPLOAD_MAX_FILESIZE:-8M}"
+
+export PHP_MEMORY_LIMIT="${PHP_MEMORY_LIMIT:-128M}"
+
+export PHP_OPCACHE_ENABLE="${PHP_OPCACHE_ENABLE:-1}"
+export PHP_OPCACHE_MEMORY_CONSUMPTION="${PHP_OPCACHE_MEMORY_CONSUMPTION:-64}"
+export PHP_OPCACHE_MAX_ACCELERATED_FILES="${PHP_OPCACHE_MAX_ACCELERATED_FILES:-10000}"
+export PHP_OPCACHE_VALIDATE_TIMESTAMPS="${PHP_OPCACHE_VALIDATE_TIMESTAMPS:-0}"
+export PHP_OPCACHE_REVALIDATE_FREQ="${PHP_OPCACHE_REVALIDATE_FREQ:-0}"
+export PHP_OPCACHE_INTERNED_STRINGS_BUFFER="${PHP_OPCACHE_INTERNED_STRINGS_BUFFER:-16}"
+export PHP_OPCACHE_FAST_SHUTDOWN="${PHP_OPCACHE_FAST_SHUTDOWN:-1}"
+
+export PHP_FPM_PM_MAX_CHILDREN="${PHP_FPM_PM_MAX_CHILDREN:-15}"
+export PHP_FPM_PM_START_SERVERS="${PHP_FPM_PM_START_SERVERS:-5}"
+export PHP_FPM_PM_MIN_SPARE_SERVERS="${PHP_FPM_PM_MIN_SPARE_SERVERS:-5}"
+export PHP_FPM_PM_MAX_SPARE_SERVERS="${PHP_FPM_PM_MAX_SPARE_SERVERS:-10}"
+export PHP_FPM_PM_MAX_REQUESTS="${PHP_FPM_PM_MAX_REQUESTS:-200}"
+export PHP_FPM_RLIMIT_FILES="${PHP_FPM_RLIMIT_FILES:-4096}"
+export PHP_FPM_RLIMIT_CORE="${PHP_FPM_RLIMIT_CORE:-0}"
+export PHP_FPM_CHDIR="${PHP_FPM_CHDIR:-${APPLICATION_ROOT}}"
+
+envsubst '${NGINX_EXPIRES_HTML},${NGINX_EXPIRES_CSS},${NGINX_EXPIRES_JS},${NGINX_EXPIRES_IMAGES},${NGINX_SERVER_ROOT},${NGINX_SERVER_INDEX},${NGINX_CLIENT_MAX_BODY_SIZE},${NGINX_CLIENT_HEADER_TIMEOUT},${NGINX_CLIENT_BODY_TIMEOUT},${NGINX_SEND_TIMEOUT},${NGINX_PROXY_CONNECT_TIMEOUT},${NGINX_PROXY_SEND_TIMEOUT},${NGINX_PROXY_READ_TIMEOUT},${NGINX_FASTCGI_READ_TIMEOUT},${NGINX_FASTCGI_IGNORE_CLIENT_ABORT},${NGINX_ERROR_LOG},${NGINX_ACCESS_LOG}' < /etc/nginx/conf.d/site.conf.template > /etc/nginx/conf.d/site.conf
+envsubst < /usr/local/etc/php/php.ini.template > /usr/local/etc/php/php.ini
+envsubst < /usr/local/etc/php-fpm.d/www.conf.template > /usr/local/etc/php-fpm.d/www.conf
+
 if [ ! -z ${USER_ID+x} ] && [ ! "$USER_ID" == "0" ]; then
   echo "Changing www-data user id..."
   usermod -u $USER_ID www-data
@@ -32,80 +83,11 @@ fi
 
 chown -R www-data:www-data /var/app
 
-NGINX_ERROR_PATH="/var/log/nginx/app_error.log"
-
-if [ ! -z ${PHP_ENV_PATH+x} ]; then
-  if [ -f "$PHP_ENV_PATH" ]; then
-    echo "Adding PHP env variables..."
-    cp "$PHP_ENV_PATH" /etc/php/7.2/fpm/env.d/env
-  fi
-fi
-
-if [ ! -z ${PHP_FPM_LOG_PATH}+x ]; then
-  echo "Setting php fpm log path..."
-  echo "php_flag[display_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
-  echo "php_admin_value[error_log] = $PHP_FPM_LOG_PATH" >> /usr/local/etc/php-fpm.d/www.conf
-  echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
-fi
-
-if [ ! -z ${NGINX_DOCUMENT_ROOT+x} ]; then
-  echo "Changing nginx document root..."
-  sed -i "s#/var/app/public#$NGINX_DOCUMENT_ROOT#g" /etc/nginx/sites-available/site.conf
-fi
-
-if [ ! -z ${NGINX_INDEX+x} ]; then
-  echo "Changing nginx index file..."
-  sed -i "s#index.php#$NGINX_INDEX#g" /etc/nginx/sites-available/site.conf
-fi
-
-if [ ! -z ${NGINX_APP_ERROR_FILE+x} ]; then
-  echo "Changing nginx error path..."
-  NGINX_ERROR_PATH="$NGINX_APP_ERROR_FILE"
-  sed -i "s#/var/log/nginx/app_error.log#$NGINX_APP_ERROR_FILE#g" /etc/nginx/sites-available/site.conf
-fi
-
-if [ ! -z ${NGINX_APP_ACCESS_FILE+x} ]; then
-  echo "Changing nginx access path..."
-  sed -i "s#/var/log/nginx/app_access.log#$NGINX_APP_ACCESS_FILE#g" /etc/nginx/sites-available/site.conf
-fi
-
-if [ ! -z ${NGINX_APP_RESPONSE_FILE+x} ]; then
-  echo "Changing nginx response path..."
-  sed -i "s#/var/log/nginx/app_responses.log#$NGINX_APP_RESPONSE_FILE#g" /etc/nginx/sites-available/site.conf
-fi
-
-if [ ! -z ${NGINX_APP_RESPONSE_FILE+x} ]; then
-  echo "Changing nginx response path..."
-  sed -i "s#/var/log/nginx/app_responses.log#$NGINX_APP_RESPONSE_FILE#g" /etc/nginx/sites-available/site.conf
-fi
-
-if [ ! -z ${NGINX_GENERAL_TIMEOUT_SECONDS+x} ]; then
-  echo "Changing nginx response path..."
-  sed -ri "s#(.*)_timeout [0-9]+s;#\1_timeout ${NGINX_GENERAL_TIMEOUT_SECONDS}s;#g" /etc/nginx/sites-available/site.conf
-fi
-
-if [ ! -z ${PHP_UPLOAD_SIZE_MAX_MB+x} ]; then
-  echo "Changing max upload and post size..."
-  sed -ri "s#post_max_size=[0-9]+M#post_max_size=${PHP_UPLOAD_SIZE_MAX_MB}M#g" /usr/local/etc/php/php.ini
-  sed -ri "s#upload_max_filesize=[0-9]+M#upload_max_filesize=${PHP_UPLOAD_SIZE_MAX_MB}M#g" /usr/local/etc/php/php.ini
-  sed -ri "s#client_max_body_size [0-9]+m;#client_max_body_size ${PHP_UPLOAD_SIZE_MAX_MB}m;#g" /etc/nginx/sites-available/site.conf
-fi
-
-if [ ! -z ${PHP_OPCACHE_VALIDATE_TIMESTAMPS+x} ]; then
-  echo "Enabling opcache timestamp validation..."
-  sed -ri "s#opcache.validate_timestamps=0#opcache.validate_timestamps=1#g" /usr/local/etc/php/php.ini
-fi
-
-if [ ! -z ${PHP_MEMORY_LIMIT+x} ]; then
-  echo "Setting php memory limit..."
-  sed -ri "s#memory_limit = [0-9]+M#memory_limit = ${PHP_MEMORY_LIMIT}M#g" /usr/local/etc/php/php.ini
-fi
-
-if [ ! -z ${DEPLOYMENT_SCRIPT_PATH+x} ]; then
-  if [ -f "$DEPLOYMENT_SCRIPT_PATH" ]; then
-    echo "Making deployment up script executable..."
-    chmod +x "$DEPLOYMENT_SCRIPT_PATH"
-    bash "$DEPLOYMENT_SCRIPT_PATH"
+if [ ! -z ${STARTUP_SCRIPT+x} ]; then
+  if [ -f "$STARTUP_SCRIPT" ]; then
+    echo "Making start-up script executable..."
+    chmod +x "$STARTUP_SCRIPT"
+    bash "$STARTUP_SCRIPT"
   fi
 fi
 

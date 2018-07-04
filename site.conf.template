@@ -1,0 +1,52 @@
+map $sent_http_content_type $expires {
+  default off;
+  text/html               ${NGINX_EXPIRES_HTML};
+  text/css                ${NGINX_EXPIRES_CSS};
+  application/javascript  ${NGINX_EXPIRES_JS};
+  ~image/                 ${NGINX_EXPIRES_IMAGES};
+}
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root ${NGINX_SERVER_ROOT};
+    index ${NGINX_SERVER_INDEX};
+
+    server_name default;
+
+    expires $expires;
+
+    client_max_body_size ${NGINX_CLIENT_MAX_BODY_SIZE};
+
+    client_header_timeout ${NGINX_CLIENT_HEADER_TIMEOUT};
+    client_body_timeout ${NGINX_CLIENT_BODY_TIMEOUT};
+    send_timeout ${NGINX_SEND_TIMEOUT};
+    proxy_connect_timeout ${NGINX_PROXY_CONNECT_TIMEOUT};
+    proxy_send_timeout ${NGINX_PROXY_SEND_TIMEOUT};
+    proxy_read_timeout ${NGINX_PROXY_READ_TIMEOUT};
+
+    location / {
+	      try_files $uri /${NGINX_SERVER_INDEX}$is_args$args;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+        fastcgi_index ${NGINX_SERVER_INDEX};
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+        fastcgi_read_timeout ${NGINX_FASTCGI_READ_TIMEOUT};
+        fastcgi_ignore_client_abort ${NGINX_FASTCGI_IGNORE_CLIENT_ABORT};
+        include fastcgi_params;
+        internal;
+    }
+
+    location ~ \.php$ {
+        return 404;
+    }
+
+    error_log ${NGINX_ERROR_LOG};
+    access_log ${NGINX_ACCESS_LOG};
+}

@@ -13,7 +13,7 @@ zend.enable_gc = On
 expose_php = Off
 max_execution_time=600
 max_input_time=600
-memory_limit = 128M
+memory_limit = ${PHP_MEMORY_LIMIT}
 error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
 display_errors = Off
 display_startup_errors = Off
@@ -28,7 +28,7 @@ variables_order = "GPCS"
 request_order = "GP"
 register_argc_argv = Off
 auto_globals_jit = On
-post_max_size=8M
+post_max_size=${PHP_POST_MAX_SIZE}
 auto_prepend_file =
 auto_append_file =
 default_mimetype = "text/html"
@@ -38,7 +38,7 @@ user_dir =
 enable_dl = Off
 cgi.fix_pathinfo=0
 file_uploads = On
-upload_max_filesize=8M
+upload_max_filesize=${PHP_UPLOAD_MAX_FILESIZE}
 max_file_uploads = 20
 allow_url_fopen = On
 allow_url_include = Off
@@ -158,13 +158,13 @@ ldap.max_links = -1
 [mcrypt]
 [dba]
 [opcache]
-opcache.enable=1
-opcache.memory_consumption=64
-opcache.max_accelerated_files=10000
-opcache.validate_timestamps=0
-opcache.revalidate_freq=0
-opcache.interned_strings_buffer=16
-opcache.fast_shutdown=1
+opcache.enable=${PHP_OPCACHE_ENABLE}
+opcache.memory_consumption=${PHP_OPCACHE_MEMORY_CONSUMPTION}
+opcache.max_accelerated_files=${PHP_OPCACHE_MAX_ACCELERATED_FILES}
+opcache.validate_timestamps=${PHP_OPCACHE_VALIDATE_TIMESTAMPS}
+opcache.revalidate_freq=${PHP_OPCACHE_REVALIDATE_FREQ}
+opcache.interned_strings_buffer=${PHP_OPCACHE_INTERNED_STRINGS_BUFFER}
+opcache.fast_shutdown=${PHP_OPCACHE_FAST_SHUTDOWN}
 
 [curl]
 [openssl]
