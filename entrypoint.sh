@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo ""
 echo "  ____  __  __  ____"
@@ -10,6 +10,7 @@ echo " |  _ \| ____\ \   / / _ \|  _ \/ ___|"
 echo " | | | |  _|  \ \ / / | | | |_) \___ \\"
 echo " | |_| | |___  \ V /| |_| |  __/ ___) |"
 echo " |____/|_____|  \_/  \___/|_|   |____/"
+echo ""
 echo " Author: joseph@pmconnect.co.uk"
 echo ""
 
@@ -20,7 +21,7 @@ php -v
 
 echo ""
 
-export APPLICATION_ROOT="/var/app"
+export APPLICATION_ROOT="${PROJECT_DIR:-/var/app}"
 
 export NGINX_SERVER_ROOT="${NGINX_SERVER_ROOT:-${APPLICATION_ROOT}/public}"
 export NGINX_SERVER_INDEX="${NGINX_SERVER_INDEX:-index.php}"
@@ -71,23 +72,29 @@ envsubst '${NGINX_EXPIRES_HTML},${NGINX_EXPIRES_CSS},${NGINX_EXPIRES_JS},${NGINX
 envsubst < /usr/local/etc/php/php.ini.template > /usr/local/etc/php/php.ini
 envsubst < /usr/local/etc/php-fpm.d/www.conf.template > /usr/local/etc/php-fpm.d/www.conf
 
-if [ ! -z ${USER_ID+x} ] && [ ! "$USER_ID" == "0" ]; then
-  echo "Changing www-data user id..."
-  usermod -u $USER_ID www-data
-fi
+WWW_DATA_DEFAULT=$(id -u www-data)
 
-if [ ! -z ${GROUP_ID+x} ] && [ ! "GROUP_ID" == "0" ]; then
-  echo "Changing www-data group id..."
-  groupmod -g $GROUP_ID www-data
-fi
+if [[ -z "$(ls -n $APPLICATION_ROOT | grep $WWW_DATA_DEFAULT)" ]]; then
+  : ${WWW_DATA_UID=$(ls -ldn /var/app | awk '{print $3}')}
+  : ${WWW_DATA_GID=$(ls -ldn /var/app | awk '{print $4}')}
 
-chown -R www-data:www-data /var/app
+  export WWW_DATA_UID
+  export WWW_DATA_GID
+
+  if [ "$WWW_DATA_UID" != "$(id -u www-data)" ]; then
+    echo "Changing www-data UID and GID to ${WWW_DATA_UID} and ${WWW_DATA_GID}."
+    usermod -u $WWW_DATA_UID www-data
+    groupmod -g $WWW_DATA_GID www-data
+    chown -R www-data:www-data /var/app
+    echo "Changed www-data UID and GID to ${WWW_DATA_UID} and ${WWW_DATA_GID}."
+  fi
+fi
 
 if [ ! -z ${STARTUP_SCRIPT+x} ]; then
   if [ -f "$STARTUP_SCRIPT" ]; then
     echo "Making start-up script executable..."
     chmod +x "$STARTUP_SCRIPT"
-    bash "$STARTUP_SCRIPT"
+    sh "$STARTUP_SCRIPT"
   fi
 fi
 
