@@ -68,9 +68,9 @@ export PHP_FPM_RLIMIT_FILES="${PHP_FPM_RLIMIT_FILES:-4096}"
 export PHP_FPM_RLIMIT_CORE="${PHP_FPM_RLIMIT_CORE:-0}"
 export PHP_FPM_CHDIR="${PHP_FPM_CHDIR:-${APPLICATION_ROOT}}"
 
-envsubst '${NGINX_EXPIRES_HTML},${NGINX_EXPIRES_CSS},${NGINX_EXPIRES_JS},${NGINX_EXPIRES_IMAGES},${NGINX_SERVER_ROOT},${NGINX_SERVER_INDEX},${NGINX_CLIENT_MAX_BODY_SIZE},${NGINX_CLIENT_HEADER_TIMEOUT},${NGINX_CLIENT_BODY_TIMEOUT},${NGINX_SEND_TIMEOUT},${NGINX_PROXY_CONNECT_TIMEOUT},${NGINX_PROXY_SEND_TIMEOUT},${NGINX_PROXY_READ_TIMEOUT},${NGINX_FASTCGI_READ_TIMEOUT},${NGINX_FASTCGI_IGNORE_CLIENT_ABORT},${NGINX_ERROR_LOG},${NGINX_ACCESS_LOG}' < /etc/nginx/conf.d/site.conf.template > /etc/nginx/conf.d/site.conf
-envsubst < /usr/local/etc/php/php.ini.template > /usr/local/etc/php/php.ini
-envsubst < /usr/local/etc/php-fpm.d/www.conf.template > /usr/local/etc/php-fpm.d/www.conf
+envsubst '${NGINX_EXPIRES_HTML},${NGINX_EXPIRES_CSS},${NGINX_EXPIRES_JS},${NGINX_EXPIRES_IMAGES},${NGINX_SERVER_ROOT},${NGINX_SERVER_INDEX},${NGINX_CLIENT_MAX_BODY_SIZE},${NGINX_CLIENT_HEADER_TIMEOUT},${NGINX_CLIENT_BODY_TIMEOUT},${NGINX_SEND_TIMEOUT},${NGINX_PROXY_CONNECT_TIMEOUT},${NGINX_PROXY_SEND_TIMEOUT},${NGINX_PROXY_READ_TIMEOUT},${NGINX_FASTCGI_READ_TIMEOUT},${NGINX_FASTCGI_IGNORE_CLIENT_ABORT},${NGINX_ERROR_LOG},${NGINX_ACCESS_LOG}' < /ops/files/site.conf.template > /etc/nginx/conf.d/site.conf
+envsubst < /ops/files/php.ini.template > /usr/local/etc/php/php.ini
+envsubst < /ops/files/www.conf.template > /usr/local/etc/php-fpm.d/www.conf
 
 WWW_DATA_DEFAULT=$(id -u www-data)
 
