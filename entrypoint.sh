@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo ""
 echo "  ____  __  __  ____"
@@ -94,7 +94,7 @@ if [ ! -z ${STARTUP_SCRIPT+x} ]; then
   if [ -f "$STARTUP_SCRIPT" ]; then
     echo "Making start-up script executable..."
     chmod +x "$STARTUP_SCRIPT"
-    sh "$STARTUP_SCRIPT"
+    bash "$STARTUP_SCRIPT"
   fi
 fi
 

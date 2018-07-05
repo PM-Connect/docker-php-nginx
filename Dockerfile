@@ -6,7 +6,7 @@ ENV PROJECT_DIR=$PROJECT_DIR
 COPY ./nginx.conf ./site.conf.template ./php.ini.template ./www.conf.template ./entrypoint.sh ./startup.php /ops/files/
 
 RUN apk update && \
-    apk --no-cache add gettext shadow nginx libmcrypt-dev && \
+    apk --no-cache add gettext shadow nginx bash libmcrypt-dev && \
     cp /ops/files/nginx.conf /etc/nginx/nginx.conf && \
     cp /ops/files/site.conf.template /etc/nginx/conf.d/site.conf.template && \
     cp /ops/files/php.ini.template /usr/local/etc/php/php.ini.template && \
