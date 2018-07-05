@@ -29,7 +29,7 @@ if [[ -z "$(ls -n /var/app | grep $WWW_DATA_DEFAULT)" ]]; then
   export WWW_DATA_UID
   export WWW_DATA_GID
 
-  if [ "$WWW_DATA_UID" != "$(id -u www-data)" ]; then
+  if [ "$WWW_DATA_UID" != "0" ] && [ "$WWW_DATA_UID" != "$(id -u www-data)" ]; then
     echo "Changing www-data UID and GID to ${WWW_DATA_UID} and ${WWW_DATA_GID}."
     usermod -u $WWW_DATA_UID www-data
     groupmod -g $WWW_DATA_GID www-data
