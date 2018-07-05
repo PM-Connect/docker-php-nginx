@@ -20,17 +20,23 @@ php -v
 
 echo ""
 
-if [ ! -z ${USER_ID+x} ] && [ ! "$USER_ID" == "0" ]; then
-  echo "Changing www-data user id..."
-  usermod -u $USER_ID www-data
-fi
+WWW_DATA_DEFAULT=$(id -u www-data)
 
-if [ ! -z ${GROUP_ID+x} ] && [ ! "GROUP_ID" == "0" ]; then
-  echo "Changing www-data group id..."
-  groupmod -g $GROUP_ID www-data
-fi
+if [[ -z "$(ls -n /var/app | grep $WWW_DATA_DEFAULT)" ]]; then
+  : ${WWW_DATA_UID=$(ls -ldn /var/app | awk '{print $3}')}
+  : ${WWW_DATA_GID=$(ls -ldn /var/app | awk '{print $4}')}
 
-chown -R www-data:www-data /var/app
+  export WWW_DATA_UID
+  export WWW_DATA_GID
+
+  if [ "$WWW_DATA_UID" != "$(id -u www-data)" ]; then
+    echo "Changing www-data UID and GID to ${WWW_DATA_UID} and ${WWW_DATA_GID}."
+    usermod -u $WWW_DATA_UID www-data
+    groupmod -g $WWW_DATA_GID www-data
+    chown -R www-data:www-data /var/app
+    echo "Changed www-data UID and GID to ${WWW_DATA_UID} and ${WWW_DATA_GID}."
+  fi
+fi
 
 NGINX_ERROR_PATH="/var/log/nginx/app_error.log"
 
