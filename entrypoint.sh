@@ -22,7 +22,11 @@ php -v
 echo ""
 
 export APPLICATION_ROOT="${PROJECT_DIR:-/var/app}"
+export PHP_VERSION="${PHP_VERSION}"
 
+#
+# NGINX Config Variables
+#
 export NGINX_SERVER_ROOT="${NGINX_SERVER_ROOT:-${APPLICATION_ROOT}/public}"
 export NGINX_SERVER_INDEX="${NGINX_SERVER_INDEX:-index.php}"
 export NGINX_CLIENT_MAX_BODY_SIZE="${NGINX_CLIENT_MAX_BODY_SIZE:-8m}"
@@ -46,6 +50,9 @@ export NGINX_EXPIRES_CSS="${NGINX_EXPIRES_CSS:-7d}"
 export NGINX_EXPIRES_JS="${NGINX_EXPIRES_JS:-7d}"
 export NGINX_EXPIRES_IMAGES="${NGINX_EXPIRES_IMAGES:-7d}"
 
+#
+# PHP Config Variables
+#
 export PHP_POST_MAX_SIZE="${PHP_POST_MAX_SIZE:-8M}"
 export PHP_UPLOAD_MAX_FILESIZE="${PHP_UPLOAD_MAX_FILESIZE:-8M}"
 
@@ -59,6 +66,9 @@ export PHP_OPCACHE_REVALIDATE_FREQ="${PHP_OPCACHE_REVALIDATE_FREQ:-0}"
 export PHP_OPCACHE_INTERNED_STRINGS_BUFFER="${PHP_OPCACHE_INTERNED_STRINGS_BUFFER:-16}"
 export PHP_OPCACHE_FAST_SHUTDOWN="${PHP_OPCACHE_FAST_SHUTDOWN:-1}"
 
+#
+# PHP FPM Config Variables
+#
 export PHP_FPM_PM_MAX_CHILDREN="${PHP_FPM_PM_MAX_CHILDREN:-15}"
 export PHP_FPM_PM_START_SERVERS="${PHP_FPM_PM_START_SERVERS:-5}"
 export PHP_FPM_PM_MIN_SPARE_SERVERS="${PHP_FPM_PM_MIN_SPARE_SERVERS:-5}"
@@ -68,10 +78,12 @@ export PHP_FPM_RLIMIT_FILES="${PHP_FPM_RLIMIT_FILES:-4096}"
 export PHP_FPM_RLIMIT_CORE="${PHP_FPM_RLIMIT_CORE:-0}"
 export PHP_FPM_CHDIR="${PHP_FPM_CHDIR:-${APPLICATION_ROOT}}"
 
-envsubst '${NGINX_EXPIRES_HTML},${NGINX_EXPIRES_CSS},${NGINX_EXPIRES_JS},${NGINX_EXPIRES_IMAGES},${NGINX_SERVER_ROOT},${NGINX_SERVER_INDEX},${NGINX_CLIENT_MAX_BODY_SIZE},${NGINX_CLIENT_HEADER_TIMEOUT},${NGINX_CLIENT_BODY_TIMEOUT},${NGINX_SEND_TIMEOUT},${NGINX_PROXY_CONNECT_TIMEOUT},${NGINX_PROXY_SEND_TIMEOUT},${NGINX_PROXY_READ_TIMEOUT},${NGINX_FASTCGI_READ_TIMEOUT},${NGINX_FASTCGI_IGNORE_CLIENT_ABORT},${NGINX_ERROR_LOG},${NGINX_ACCESS_LOG}' < /ops/files/site.conf.template > /etc/nginx/conf.d/site.conf
-envsubst < /ops/files/php.ini.template > /usr/local/etc/php/php.ini
-envsubst < /ops/files/www.conf.template > /usr/local/etc/php-fpm.d/www.conf
+# Configure NGINX/PHP/PHP-FPM
+envsubst '${APPLICATION_ROOT},${PHP_VERSION},${NGINX_EXPIRES_HTML},${NGINX_EXPIRES_CSS},${NGINX_EXPIRES_JS},${NGINX_EXPIRES_IMAGES},${NGINX_SERVER_ROOT},${NGINX_SERVER_INDEX},${NGINX_CLIENT_MAX_BODY_SIZE},${NGINX_CLIENT_HEADER_TIMEOUT},${NGINX_CLIENT_BODY_TIMEOUT},${NGINX_SEND_TIMEOUT},${NGINX_PROXY_CONNECT_TIMEOUT},${NGINX_PROXY_SEND_TIMEOUT},${NGINX_PROXY_READ_TIMEOUT},${NGINX_FASTCGI_READ_TIMEOUT},${NGINX_FASTCGI_IGNORE_CLIENT_ABORT},${NGINX_ERROR_LOG},${NGINX_ACCESS_LOG}' < /ops/files/site.conf.template > /etc/nginx/conf.d/site.conf
+envsubst '${APPLICATION_ROOT},${PHP_VERSION},${PHP_POST_MAX_SIZE},${PHP_OPCACHE_ENABLE},${PHP_OPCACHE_MEMORY_CONSUMPTION},${PHP_OPCACHE_MAX_ACCELERATED_FILES},${PHP_OPCACHE_VALIDATE_TIMESTAMPS},${PHP_OPCACHE_REVALIDATE_FREQ},${PHP_OPCACHE_INTERNED_STRINGS_BUFFER},${PHP_OPCACHE_FAST_SHUTDOWN}' < /ops/files/php.ini.template > /usr/local/etc/php/php.ini
+envsubst '${APPLICATION_ROOT},${PHP_VERSION},${PHP_FPM_PM_MAX_CHILDREN},${PHP_FPM_PM_START_SERVERS},${PHP_FPM_PM_MIN_SPARE_SERVERS},${PHP_FPM_PM_MAX_SPARE_SERVERS},${PHP_FPM_PM_MAX_REQUESTS},${PHP_FPM_RLIMIT_FILES},${PHP_FPM_RLIMIT_CORE},${PHP_FPM_CHDIR}' < /ops/files/www.conf.template > /usr/local/etc/php-fpm.d/www.conf
 
+# Calculate user/group ids and set if required. (Mostly for linux)
 WWW_DATA_DEFAULT=$(id -u www-data)
 
 if [[ -z "$(ls -n $APPLICATION_ROOT | grep $WWW_DATA_DEFAULT)" ]]; then
@@ -90,6 +102,7 @@ if [[ -z "$(ls -n $APPLICATION_ROOT | grep $WWW_DATA_DEFAULT)" ]]; then
   fi
 fi
 
+# Check if we have a startup script and execute.
 if [ ! -z ${STARTUP_SCRIPT+x} ]; then
   if [ -f "$STARTUP_SCRIPT" ]; then
     echo "Making start-up script executable..."
@@ -99,6 +112,7 @@ if [ ! -z ${STARTUP_SCRIPT+x} ]; then
 fi
 
 if [ ! -z "$@" ]; then
+  # If we have arguments, run those against php instead of running php-fpm and nginx.
   set -- php "$@"
   exec "$@"
 else
@@ -119,7 +133,7 @@ else
   echo "Monitoring php-fpm and nginx processes and exiting on failures (${running_pids[@]})..."
   echo ""
 
-  # Monitor php and nginx and if either exit, stop the container.
+  # Monitor php-fpm and nginx and if either exit, stop the container.
   while (( ${#running_pids[@]} )); do
     for pid_idx in "${!running_pids[@]}"; do
       pid=${running_pids[$pid_idx]}

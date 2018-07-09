@@ -1,7 +1,7 @@
 [www]
 user = www-data
 group = www-data
-listen = /var/run/php/php7.2-fpm.sock
+listen = /var/run/php/php${PHP_VERSION}-fpm.sock
 listen.owner = www-data
 listen.group = www-data
 
@@ -14,7 +14,7 @@ pm.max_requests = ${PHP_FPM_PM_MAX_REQUESTS}
 
 rlimit_files = 4096
 rlimit_core = 0
-chdir = /var/app
+chdir = ${APPLICATION_ROOT}
 clear_env = no
 
 catch_workers_output = yes

@@ -1,7 +1,10 @@
-FROM php:7.2-fpm-alpine
-
+ARG PHP_VERSION='7.2'
 ARG PROJECT_DIR='/var/app'
+
+FROM php:${PHP_VERSION}-fpm-alpine
+
 ENV PROJECT_DIR=$PROJECT_DIR
+ENV PHP_VERSION=$PHP_VERSION
 
 COPY ./nginx.conf ./site.conf.template ./php.ini.template ./www.conf.template ./entrypoint.sh ./startup.php /ops/files/
 
