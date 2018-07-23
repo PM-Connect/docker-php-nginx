@@ -22,7 +22,7 @@ echo ""
 
 WWW_DATA_DEFAULT=$(id -u www-data)
 
-if [[ -z "$(ls -n /var/app | grep $WWW_DATA_DEFAULT)" ]]; then
+if [[ -z "$(ls -n /var/app | awk '{print $3}' | grep $WWW_DATA_DEFAULT)" ]]; then
   : ${WWW_DATA_UID=$(ls -ldn /var/app | awk '{print $3}')}
   : ${WWW_DATA_GID=$(ls -ldn /var/app | awk '{print $4}')}
 
