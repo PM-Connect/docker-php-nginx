@@ -86,7 +86,7 @@ envsubst '${APPLICATION_ROOT},${PHP_VERSION},${PHP_FPM_PM_MAX_CHILDREN},${PHP_FP
 # Calculate user/group ids and set if required. (Mostly for linux)
 WWW_DATA_DEFAULT=$(id -u www-data)
 
-if [[ -z "$(ls -n $APPLICATION_ROOT | grep $WWW_DATA_DEFAULT)" ]]; then
+if [[ -z "$(ls -n $APPLICATION_ROOT | awk '{print $3}' | grep $WWW_DATA_DEFAULT)" ]]; then
   : ${WWW_DATA_UID=$(ls -ldn /var/app | awk '{print $3}')}
   : ${WWW_DATA_GID=$(ls -ldn /var/app | awk '{print $4}')}
 
