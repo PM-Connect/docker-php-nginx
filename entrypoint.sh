@@ -109,7 +109,7 @@ if [ ! -z ${STARTUP_SCRIPT+x} ]; then
     if [ ! -z ${STARTUP_SCRIPT_USER+x} ]; then
       chmod +x "$STARTUP_SCRIPT"
 
-      su -c "bash ${APPLICATION_ROOT}/${STARTUP_SCRIPT}" -s /bin/bash "${STARTUP_SCRIPT_USER}"
+      su -c "bash ${STARTUP_SCRIPT}" -s /bin/bash "${STARTUP_SCRIPT_USER}"
     else
       chmod +x "$STARTUP_SCRIPT"
       bash "$STARTUP_SCRIPT"
