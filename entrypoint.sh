@@ -112,7 +112,7 @@ if [ ! -z ${STARTUP_SCRIPT+x} ]; then
 
       echo "Running startup script as user: ${STARTUP_SCRIPT_USER}"
 
-      su -c "bash ${STARTUP_SCRIPT}" -s /bin/bash "${STARTUP_SCRIPT_USER}"
+      su -c "export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin; bash ${STARTUP_SCRIPT}" -s /bin/bash "${STARTUP_SCRIPT_USER}"
     else
       chmod +x "$STARTUP_SCRIPT"
       bash "$STARTUP_SCRIPT"
