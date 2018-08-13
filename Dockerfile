@@ -1,6 +1,5 @@
 ARG PHP_INSTALL_VERSION='7.2'
 
-
 FROM php:${PHP_INSTALL_VERSION}-fpm-alpine
 
 ARG PROJECT_DIR='/var/app'

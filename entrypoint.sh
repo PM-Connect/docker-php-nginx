@@ -109,6 +109,8 @@ if [ ! -z ${STARTUP_SCRIPT+x} ]; then
     if [ ! -z ${STARTUP_SCRIPT_USER+x} ]; then
       chmod +x "$STARTUP_SCRIPT"
 
+      echo "Running startup script as user: ${STARTUP_SCRIPT_USER}"
+
       su -c "bash ${STARTUP_SCRIPT}" -s /bin/bash "${STARTUP_SCRIPT_USER}"
     else
       chmod +x "$STARTUP_SCRIPT"
