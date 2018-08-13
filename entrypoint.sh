@@ -107,6 +107,7 @@ if [ ! -z ${STARTUP_SCRIPT+x} ]; then
     echo "Making start-up script executable..."
 
     if [ ! -z ${STARTUP_SCRIPT_USER+x} ]; then
+      chown "${STARTUP_SCRIPT_USER}" "$STARTUP_SCRIPT"
       chmod +x "$STARTUP_SCRIPT"
 
       echo "Running startup script as user: ${STARTUP_SCRIPT_USER}"
