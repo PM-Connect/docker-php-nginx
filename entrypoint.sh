@@ -22,7 +22,6 @@ php -v
 echo ""
 
 export APPLICATION_ROOT="${PROJECT_DIR:-/var/app}"
-export PHP_VERSION="${PHP_VERSION}"
 
 #
 # NGINX Config Variables

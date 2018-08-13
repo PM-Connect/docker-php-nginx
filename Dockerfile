@@ -1,10 +1,11 @@
-ARG PHP_VERSION='7.2'
+ARG PHP_INSTALL_VERSION='7.2'
+
+
+FROM php:${PHP_INSTALL_VERSION}-fpm-alpine
+
 ARG PROJECT_DIR='/var/app'
 
-FROM php:${PHP_VERSION}-fpm-alpine
-
 ENV PROJECT_DIR=$PROJECT_DIR
-ENV PHP_VERSION=$PHP_VERSION
 
 COPY ./nginx.conf ./site.conf.template ./php.ini.template ./www.conf.template ./entrypoint.sh ./startup.php /ops/files/
 
@@ -27,10 +28,10 @@ RUN apk update && \
     # Configure PHP and NGINX directories.
     mkdir -p /var/run/php && \
     mkdir -p /var/tmp/nginx && \
-    chown -R www-data:www-data /var/tmp/nginx && \
+    chown -R www-data:www-data "/var/tmp/nginx" && \
     #
     # Set the permissions of the project directory.
-    chown -R www-data:www-data ${PROJECT_DIR} && \
+    chown -R www-data:www-data "${PROJECT_DIR}" && \
     #
     # Setup the entrypoint.
     chown root /entrypoint.sh && \
