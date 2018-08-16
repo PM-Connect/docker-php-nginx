@@ -97,7 +97,8 @@ if [[ -z "$(ls -n $APPLICATION_ROOT | awk '{print $3}' | grep $WWW_DATA_DEFAULT)
     echo "Changing www-data UID and GID to ${WWW_DATA_UID} and ${WWW_DATA_GID}."
     usermod -u $WWW_DATA_UID www-data
     groupmod -g $WWW_DATA_GID www-data
-    chown -R www-data:www-data /var/app
+    chown -R www-data:www-data ${APPLICATION_ROOT}
+    chown -R www-data:www-data /var/tmp/nginx
     echo "Changed www-data UID and GID to ${WWW_DATA_UID} and ${WWW_DATA_GID}."
   fi
 fi
