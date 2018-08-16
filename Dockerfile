@@ -25,6 +25,7 @@ RUN apk update && \
     docker-php-ext-install opcache && \
     #
     # Configure PHP and NGINX directories.
+    # These should also be added to the entrypoint.sh file in the calculation of the user group section.
     mkdir -p /var/run/php && \
     mkdir -p /var/tmp/nginx && \
     chown -R www-data:www-data "/var/tmp/nginx" && \
