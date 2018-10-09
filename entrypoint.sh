@@ -98,6 +98,12 @@ if [[ -z "$(ls -n $APPLICATION_ROOT | awk '{print $3}' | grep $WWW_DATA_DEFAULT)
     groupmod -g $WWW_DATA_GID www-data
     chown -R www-data:www-data $APPLICATION_ROOT
     chown -R www-data:www-data /var/tmp/nginx
+
+    echo "Setting nginx to run using the user www-data instead of root."
+    sed -i "s/user root;/user www-data;/g" /etc/nginx/nginx.conf
+
+    export STARTUP_SCRIPT_USER=www-data
+
     echo "Changed www-data UID and GID to ${WWW_DATA_UID} and ${WWW_DATA_GID}."
   fi
 fi
