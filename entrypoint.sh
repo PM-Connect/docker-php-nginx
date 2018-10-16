@@ -102,6 +102,10 @@ if [[ -z "$(ls -n $APPLICATION_ROOT | awk '{print $3}' | grep $WWW_DATA_DEFAULT)
     echo "Setting nginx to run using the user www-data instead of root."
     sed -i "s/user root;/user www-data;/g" /etc/nginx/nginx.conf
 
+    echo "Setting php-fpm to run using the user www-data instead of root."
+    sed -i "s/user = root/user = www-data/g" /usr/local/etc/php-fpm.d/www.conf
+    sed -i "s/group = root/group = www-data/g" /usr/local/etc/php-fpm.d/www.conf
+
     export STARTUP_SCRIPT_USER=www-data
 
     echo "Changed www-data UID and GID to ${WWW_DATA_UID} and ${WWW_DATA_GID}."
@@ -137,7 +141,7 @@ else
 
   echo ""
 
-  php-fpm --nodaemonize & running_pids+=( $! )
+  php-fpm -R --nodaemonize & running_pids+=( $! )
 
   echo ""
 
