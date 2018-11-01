@@ -43,7 +43,7 @@ export NGINX_FASTCGI_READ_TIMEOUT="${NGINX_FASTCGI_READ_TIMEOUT:-300}"
 export NGINX_FASTCGI_IGNORE_CLIENT_ABORT="${NGINX_FASTCGI_IGNORE_CLIENT_ABORT:-on}"
 
 export NGINX_ERROR_LOG="${NGINX_ERROR_LOG:-/var/log/nginx/app_error.log}"
-export NGINX_ACCESS_LOG="${NGINX_ERROR_LOG:-/var/log/nginx/app_access.log}"
+export NGINX_ACCESS_LOG="${NGINX_ACCESS_LOG:-/var/log/nginx/app_access.log}"
 
 export NGINX_EXPIRES_HTML="${NGINX_EXPIRES_HTML:-epoch}"
 export NGINX_EXPIRES_CSS="${NGINX_EXPIRES_CSS:-7d}"
