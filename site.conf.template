@@ -45,6 +45,23 @@ server {
         internal;
     }
 
+    location /nginx_status {
+        stub_status on;
+        access_log off;
+        allow 127.0.0.1;
+        deny all;
+    }
+
+    location /fpm_status {
+        access_log off;
+        allow 127.0.0.1;
+        deny all;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_pass unix:/var/run/php/php${PHP_VERSION}-fpm.sock;
+    }
+
     location ~ \.php$ {
         return 404;
     }

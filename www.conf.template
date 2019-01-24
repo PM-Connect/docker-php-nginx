@@ -11,6 +11,7 @@ pm.start_servers = ${PHP_FPM_PM_START_SERVERS}
 pm.min_spare_servers = ${PHP_FPM_PM_MIN_SPARE_SERVERS}
 pm.max_spare_servers = ${PHP_FPM_PM_MAX_SPARE_SERVERS}
 pm.max_requests = ${PHP_FPM_PM_MAX_REQUESTS}
+pm.status_path = /fpm_status
 
 rlimit_files = 4096
 rlimit_core = 0
