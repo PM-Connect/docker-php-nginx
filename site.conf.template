@@ -39,6 +39,8 @@ server {
         fastcgi_param DOCUMENT_ROOT $realpath_root;
         fastcgi_read_timeout ${NGINX_FASTCGI_READ_TIMEOUT};
         fastcgi_ignore_client_abort ${NGINX_FASTCGI_IGNORE_CLIENT_ABORT};
+        fastcgi_buffer_size ${NGINX_FASTCGI_BUFFER_SIZE};
+        fastcgi_buffers ${NGINX_FASTCGI_BUFFERS_NUMBER} ${NGINX_FASTCGI_BUFFERS_SIZE};
         include fastcgi_params;
         internal;
     }
@@ -47,6 +49,6 @@ server {
         return 404;
     }
 
-    error_log ${NGINX_ERROR_LOG};
+    error_log ${NGINX_ERROR_LOG} ${NGINX_ERROR_LOG_LEVEL};
     access_log ${NGINX_ACCESS_LOG};
 }
