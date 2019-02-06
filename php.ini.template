@@ -113,20 +113,20 @@ bcmath.scale = 0
 
 [browscap]
 [Session]
-session.save_handler = files
+session.save_handler = ${SESSION_SAVE_HANDLER}
 session.use_strict_mode = 0
 session.use_cookies = 1
 session.use_only_cookies = 1
-session.name = PHPSESSID
-session.auto_start = 0
-session.cookie_lifetime = 0
-session.cookie_path = /
-session.cookie_domain =
+session.name = ${SESSION_NAME}
+session.auto_start = ${SESSION_AUTO_START}
+session.cookie_lifetime = ${SESSION_COOKIE_LIFETIME}
+session.cookie_path = ${SESSION_COOKIE_PATH}
+session.cookie_domain = ${SESSION_COOKIE_DOMAIN}
 session.cookie_httponly =
-session.serialize_handler = php
+session.serialize_handler = ${SESSION_SERIALIZE_HANDLER}
 session.gc_probability = 0
 session.gc_divisor = 1000
-session.gc_maxlifetime = 1440
+session.gc_maxlifetime = ${SESSION_GC_MAXLIFETIME}
 session.referer_check =
 session.cache_limiter = nocache
 session.cache_expire = 180
@@ -134,6 +134,7 @@ session.use_trans_sid = 0
 session.sid_length = 26
 session.trans_sid_tags = "a=href,area=href,frame=src,form="
 session.sid_bits_per_character = 5
+session.save_path = ${SESSION_SAVE_PATH}
 
 [Assertion]
 zend.assertions = -1
