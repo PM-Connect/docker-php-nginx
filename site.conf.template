@@ -6,6 +6,12 @@ map $sent_http_content_type $expires {
   ~image/                 ${NGINX_EXPIRES_IMAGES};
 }
 
+map $sent_http_content_type $loggable {
+    default 1;
+    ~image/ 0;
+    text/css 0;
+}
+
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -67,5 +73,5 @@ server {
     }
 
     error_log ${NGINX_ERROR_LOG} ${NGINX_ERROR_LOG_LEVEL};
-    access_log ${NGINX_ACCESS_LOG};
+    access_log ${NGINX_ACCESS_LOG} combined if=$loggable;
 }
