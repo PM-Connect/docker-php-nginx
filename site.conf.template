@@ -12,7 +12,7 @@ map $sent_http_content_type $loggable {
     text/css 0;
 }
 
-log_format respnsetime '$remote_addr - [$time_iso8601] '
+log_format responsetime '$remote_addr - [$time_iso8601] '
       '"$request" $status '
       '$request_time $upstream_response_time';
 
