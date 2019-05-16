@@ -12,6 +12,10 @@ map $sent_http_content_type $loggable {
     text/css 0;
 }
 
+log_format respnsetime '$remote_addr - [$time_iso8601] '
+      '"$request" $status '
+      '$request_time $upstream_response_time';
+
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -74,4 +78,5 @@ server {
 
     error_log ${NGINX_ERROR_LOG} ${NGINX_ERROR_LOG_LEVEL};
     access_log ${NGINX_ACCESS_LOG} combined if=$loggable;
+    access_log ${NGINX_RESPONSETIME_LOG} responsetime if=$loggable;
 }
