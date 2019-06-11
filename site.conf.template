@@ -62,7 +62,7 @@ server {
         deny all;
     }
 
-    location /fpm_status {
+    location ~ ^/(fpm_status|fpm_ping)$ {
         access_log off;
         allow 127.0.0.1;
         deny all;

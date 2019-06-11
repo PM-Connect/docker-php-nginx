@@ -6,7 +6,7 @@ ARG PROJECT_DIR='/var/app'
 
 ENV PROJECT_DIR=$PROJECT_DIR
 
-COPY ./nginx.conf ./site.conf.template ./php.ini.template ./www.conf.template ./entrypoint.sh ./startup.php /ops/files/
+COPY ./nginx.conf ./site.conf.template ./php.ini.template ./php-fpm.conf.template ./www.conf.template ./entrypoint.sh ./startup.php /ops/files/
 
 RUN apk update && \
     apk --no-cache add gettext shadow nginx bash libmcrypt-dev && \
@@ -18,7 +18,7 @@ RUN apk update && \
     cp /ops/files/startup.php ${PROJECT_DIR}/public/index.php && \
     #
     # Remove php and nginx files that are not needed and can cause issues when run.
-    rm -rf /usr/local/etc/php-fpm.d/docker.conf /usr/local/etc/php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf.default /usr/local/etc/php-fpm.d/zz-docker.conf && \
+    rm -rf /usr/local/etc/php-fpm.d/docker.conf /usr/local/etc/php-fpm.d/www.conf /usr/local/etc/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf.default /usr/local/etc/php-fpm.d/zz-docker.conf && \
     rm -rf /etc/nginx/conf.d/default.conf && \
     #
     # Configure php extensions.
@@ -43,3 +43,5 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 80
 EXPOSE 443
+
+HEALTHCHECK --interval=30s --timeout=1s CMD curl -f http://localhost/fpm_ping || exit 1

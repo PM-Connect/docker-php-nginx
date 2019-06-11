@@ -13,13 +13,15 @@ pm.max_spare_servers = ${PHP_FPM_PM_MAX_SPARE_SERVERS}
 pm.max_requests = ${PHP_FPM_PM_MAX_REQUESTS}
 pm.status_path = /fpm_status
 
+ping.path = /fpm_ping
+
 rlimit_files = 4096
 rlimit_core = 0
 chdir = ${APPLICATION_ROOT}
 clear_env = no
 
 catch_workers_output = yes
+access.log = ${PHP_FPM_ACCESS_LOG}
 
-php_flag[display_errors] = on
-php_admin_value[error_log] = ${PHP_FPM_PHP_ADMIN_VALUE_ERROR_LOG}
-php_admin_flag[log_errors] = on
+request_slowlog_timeout = ${PHP_FPM_SLOWLOG_TIMEOUT}
+slowlog = ${PHP_FPM_SLOWLOG}
