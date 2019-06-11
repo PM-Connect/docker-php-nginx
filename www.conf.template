@@ -22,6 +22,7 @@ clear_env = no
 
 catch_workers_output = yes
 access.log = ${PHP_FPM_ACCESS_LOG}
+request_terminate_timeout = ${PHP_FPM_REQUEST_TERMINATE_TIMEOUT}
 
 request_slowlog_timeout = ${PHP_FPM_SLOWLOG_TIMEOUT}
 slowlog = ${PHP_FPM_SLOWLOG}
