@@ -1,10 +1,15 @@
 FROM php:7.2-fpm-alpine
 
+ENV PHPREDIS_VERSION 5.0.2
 RUN apk update && \
-    apk --no-cache add shadow nginx bash libmcrypt-dev && \
+    apk --no-cache add shadow nginx bash libmcrypt-dev icu-dev && \
     rm -rf /usr/local/etc/php-fpm.d/* && \
     rm -rf /etc/nginx/conf.d && \
-    docker-php-ext-install opcache
+    curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.tar.gz && \
+    tar xfz /tmp/redis.tar.gz && \
+    rm -r /tmp/redis.tar.gz && \
+    mv phpredis-$PHPREDIS_VERSION /usr/src/php/ext/redis && \
+    docker-php-ext-install opcache intl redis
 
 COPY ./nginx.conf /etc/nginx/
 COPY ./site.conf  /etc/nginx/sites-available/
