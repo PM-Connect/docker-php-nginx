@@ -10,7 +10,8 @@ ENV PHPREDIS_VERSION=$PHPREDIS_VERSION
 
 COPY ./nginx.conf ./site.conf.template ./php.ini.template ./php-fpm.conf.template ./www.conf.template ./entrypoint.sh ./startup.php /ops/files/
 
-RUN apk update && \
+RUN set -eux; \
+    apk update && \
     apk --no-cache add gettext shadow nginx bash libmcrypt-dev && \
     #
     # Copy config files/templates to where they need to be.
