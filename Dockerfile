@@ -3,8 +3,10 @@ ARG PHP_INSTALL_VERSION='7.2'
 FROM php:${PHP_INSTALL_VERSION}-fpm-alpine
 
 ARG PROJECT_DIR='/var/app'
+ARG PHPREDIS_VERSION='5.0.2'
 
 ENV PROJECT_DIR=$PROJECT_DIR
+ENV PHPREDIS_VERSION=$PHPREDIS_VERSION
 
 COPY ./nginx.conf ./site.conf.template ./php.ini.template ./php-fpm.conf.template ./www.conf.template ./entrypoint.sh ./startup.php /ops/files/
 
@@ -22,7 +24,11 @@ RUN apk update && \
     rm -rf /etc/nginx/conf.d/default.conf && \
     #
     # Configure php extensions.
-    docker-php-ext-install opcache && \
+    curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.tar.gz && \
+    tar xfz /tmp/redis.tar.gz && \
+    rm -r /tmp/redis.tar.gz && \
+    mv phpredis-$PHPREDIS_VERSION /usr/src/php/ext/redis && \
+    docker-php-ext-install opcache intl redis && \
     #
     # Configure PHP and NGINX directories.
     # These should also be added to the entrypoint.sh file in the calculation of the user group section.
