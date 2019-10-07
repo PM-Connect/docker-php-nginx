@@ -29,7 +29,7 @@ RUN set -eux; \
     tar -xzf /tmp/redis.tar.gz && \
     rm -r /tmp/redis.tar.gz && \
     mkdir -p /usr/src/php/ext && \
-    mv phpredis-$PHPREDIS_VERSION /usr/src/php/ext/redis && \
+    mv /tmp/phpredis-$PHPREDIS_VERSION /usr/src/php/ext/redis && \
     docker-php-ext-install opcache intl redis && \
     #
     # Configure PHP and NGINX directories.
