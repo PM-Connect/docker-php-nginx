@@ -12,7 +12,7 @@ COPY ./nginx.conf ./site.conf.template ./php.ini.template ./php-fpm.conf.templat
 
 RUN set -eux; \
     apk update && \
-    apk --no-cache add gettext shadow nginx bash libmcrypt-dev && \
+    apk --no-cache add gettext shadow nginx bash libmcrypt-dev icu-dev && \
     #
     # Copy config files/templates to where they need to be.
     cp /ops/files/nginx.conf /etc/nginx/nginx.conf && \
