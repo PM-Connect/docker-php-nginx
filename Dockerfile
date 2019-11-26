@@ -1,4 +1,4 @@
-ARG PHP_INSTALL_VERSION='7.2'
+ARG PHP_INSTALL_VERSION='7.3'
 
 FROM php:${PHP_INSTALL_VERSION}-fpm-alpine
 
@@ -26,7 +26,7 @@ RUN set -eux; \
     #
     # Configure php extensions.
     curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.tar.gz && \
-    tar -xzf /tmp/redis.tar.gz && \
+    tar -xzf /tmp/redis.tar.gz -C /tmp && \
     rm -r /tmp/redis.tar.gz && \
     mkdir -p /usr/src/php/ext && \
     mv /tmp/phpredis-$PHPREDIS_VERSION /usr/src/php/ext/redis && \

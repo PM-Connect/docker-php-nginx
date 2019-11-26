@@ -20,6 +20,8 @@ rlimit_core = 0
 chdir = ${APPLICATION_ROOT}
 clear_env = no
 
+decorate_workers_output = no
+
 catch_workers_output = yes
 access.log = ${PHP_FPM_ACCESS_LOG}
 request_terminate_timeout = ${PHP_FPM_REQUEST_TERMINATE_TIMEOUT}
