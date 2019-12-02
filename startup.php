@@ -1,3 +1,3 @@
 <?php declare(strict_types=1);
 
-echo phpinfo();
+echo "Please configure your public folder\n";
