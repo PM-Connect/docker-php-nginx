@@ -44,6 +44,12 @@ allow_url_fopen = Off
 allow_url_include = Off
 default_socket_timeout = 60
 
+; maximum memory allocated to store the results
+realpath_cache_size=4096K
+
+; save the results for 10 minutes (600 seconds)
+realpath_cache_ttl=600
+
 [CLI Server]
 cli_server.color = On
 
