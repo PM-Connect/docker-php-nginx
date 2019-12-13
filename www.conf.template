@@ -1,11 +1,11 @@
 [www]
 user = root
 group = root
-listen = /var/run/php/php${PHP_VERSION}-fpm.sock
+listen = 127.0.0.1:9000
 listen.owner = www-data
 listen.group = www-data
 
-pm = dynamic
+pm = static
 pm.max_children = ${PHP_FPM_PM_MAX_CHILDREN}
 pm.start_servers = ${PHP_FPM_PM_START_SERVERS}
 pm.min_spare_servers = ${PHP_FPM_PM_MIN_SPARE_SERVERS}
