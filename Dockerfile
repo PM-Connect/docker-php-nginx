@@ -47,9 +47,13 @@ RUN set -eux; \
 
 WORKDIR ${PROJECT_DIR}
 
-ENTRYPOINT ["/entrypoint.sh"]
+RUN wget -P / https://github.com/hipages/php-fpm_exporter/releases/download/v1.0.0/php-fpm_exporter_1.0.0_linux_amd64 \ 
+    && chmod +x /php-fpm_exporter_1.0.0_linux_amd64
+
+ENTRYPOINT /php-fpm_exporter_1.0.0_linux_amd64 server --phpfpm.scrape-uri="unix:///var/run/php/php7.3.12-fpm.sock;/fpm_status" & /entrypoint.sh
 
 EXPOSE 80
 EXPOSE 443
+EXPOSE 9253
 
 HEALTHCHECK --interval=30s --timeout=1s CMD curl -f http://localhost/fpm_ping || exit 1
