@@ -50,7 +50,7 @@ WORKDIR ${PROJECT_DIR}
 RUN wget -P / https://github.com/hipages/php-fpm_exporter/releases/download/v1.0.0/php-fpm_exporter_1.0.0_linux_amd64 \ 
     && chmod +x /php-fpm_exporter_1.0.0_linux_amd64
 
-ENTRYPOINT /php-fpm_exporter_1.0.0_linux_amd64 server --phpfpm.scrape-uri="unix:///var/run/php/php7.3.12-fpm.sock;/fpm_status" & /entrypoint.sh
+ENTRYPOINT /php-fpm_exporter_1.0.0_linux_amd64 server --phpfpm.scrape-uri="unix:///var/run/php/php${PHP_VERSION}-fpm.sock;/fpm_status" & /entrypoint.sh
 
 EXPOSE 80
 EXPOSE 443
