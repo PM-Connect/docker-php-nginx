@@ -1,3 +1,14 @@
+#!/bin/bash
+
+set -e
+
+nginx -v
+php -v
+
+echo ""
+
+export APPLICATION_ROOT="${PROJECT_DIR:-/var/app}"
+
 #
 # NGINX Config Variables
 #
