@@ -1,28 +1,3 @@
-#!/bin/bash
-
-echo ""
-echo "  ____  __  __  ____"
-echo " |  _ \|  \/  |/ ___|"
-echo " | |_) | |\/| | |"
-echo " |  __/| |  | | |___"
-echo " |_|__ |_|__|_|\____|____  ____  ____"
-echo " |  _ \| ____\ \   / / _ \|  _ \/ ___|"
-echo " | | | |  _|  \ \ / / | | | |_) \___ \\"
-echo " | |_| | |___  \ V /| |_| |  __/ ___) |"
-echo " |____/|_____|  \_/  \___/|_|   |____/"
-echo ""
-echo " Author: joseph@pmconnect.co.uk"
-echo ""
-
-set -e
-
-nginx -v
-php -v
-
-echo ""
-
-export APPLICATION_ROOT="${PROJECT_DIR:-/var/app}"
-
 #
 # NGINX Config Variables
 #
