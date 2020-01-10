@@ -5,6 +5,8 @@ set -e
 nginx -v
 php -v
 
+wd=$(cd $(dirname $(realpath $0)); pwd)
+
 echo ""
 
 export APPLICATION_ROOT="${PROJECT_DIR:-/var/app}"
@@ -111,7 +113,7 @@ if [[ -z ${WEB_CONCURRENCY:-} ]]; then
 	echo "ram=${ram} bram=${bram} cram=${cram}"
 		
 	# want to get php memory limits from config files as well as env variable in future
-	read WEB_CONCURRENCY php_memory_limit <<<$(php ${php_config:+-c "$php_config"} "util/autotune.php" -y "$fpm_config" -t "$DOCUMENT_ROOT" "$ram")
+	read WEB_CONCURRENCY php_memory_limit <<<$(php ${php_config:+-c "$php_config"} "$wd/util/autotune.php" -y "$fpm_config" -t "$DOCUMENT_ROOT" "$ram")
 	
 	[[ $WEB_CONCURRENCY -lt 1 ]] && WEB_CONCURRENCY=1
 	export WEB_CONCURRENCY
