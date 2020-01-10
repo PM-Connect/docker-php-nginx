@@ -8,15 +8,17 @@ ARG PHPREDIS_VERSION='5.0.2'
 ENV PROJECT_DIR=$PROJECT_DIR
 ENV PHPREDIS_VERSION=$PHPREDIS_VERSION
 
-COPY ./nginx.conf ./site.conf.template ./php.ini.template ./php-fpm.conf.template ./www.conf.template ./entrypoint.sh ./startup.php /ops/files/
+COPY . /ops/files/
 
 RUN set -eux; \
     apk update && \
     apk --no-cache add gettext shadow nginx bash libmcrypt-dev icu-dev && \
+	mkdir -p /entry/util && \
     #
     # Copy config files/templates to where they need to be.
     cp /ops/files/nginx.conf /etc/nginx/nginx.conf && \
-    cp /ops/files/entrypoint.sh /entrypoint.sh && \
+    cp /ops/files/entrypoint.sh /entry/entrypoint.sh && \
+    cp /ops/files/util/* /entry/util/ && \
     mkdir -p ${PROJECT_DIR}/public && \
     cp /ops/files/startup.php ${PROJECT_DIR}/public/index.php && \
     #
@@ -42,15 +44,15 @@ RUN set -eux; \
     chown -R www-data:www-data "${PROJECT_DIR}" && \
     #
     # Setup the entrypoint.
-    chown root /entrypoint.sh && \
-    chmod +x /entrypoint.sh
+    chown root /entry/entrypoint.sh && \
+    chmod +x /entry/entrypoint.sh
 
 WORKDIR ${PROJECT_DIR}
 
 RUN wget -P / https://github.com/hipages/php-fpm_exporter/releases/download/v1.0.0/php-fpm_exporter_1.0.0_linux_amd64 \ 
     && chmod +x /php-fpm_exporter_1.0.0_linux_amd64
 
-ENTRYPOINT /php-fpm_exporter_1.0.0_linux_amd64 server --phpfpm.scrape-uri="unix:///var/run/php/php${PHP_VERSION}-fpm.sock;/fpm_status" & /entrypoint.sh
+ENTRYPOINT /php-fpm_exporter_1.0.0_linux_amd64 server --phpfpm.scrape-uri="unix:///var/run/php/php${PHP_VERSION}-fpm.sock;/fpm_status" & /entry/entrypoint.sh
 
 EXPOSE 80
 EXPOSE 443

@@ -15,6 +15,7 @@ export APPLICATION_ROOT="${PROJECT_DIR:-/var/app}"
 export NGINX_SERVER_ROOT="${NGINX_SERVER_ROOT:-${APPLICATION_ROOT}/public}"
 export NGINX_SERVER_INDEX="${NGINX_SERVER_INDEX:-index.php}"
 export NGINX_CLIENT_MAX_BODY_SIZE="${NGINX_CLIENT_MAX_BODY_SIZE:-8m}"
+export DOCUMENT_ROOT="${NGINX_SERVER_ROOT}"
 
 export NGINX_DEFAULT_TIMEOUT="${NGINX_DEFAULT_TIMEOUT:-60s}"
 export NGINX_CLIENT_HEADER_TIMEOUT="${NGINX_CLIENT_HEADER_TIMEOUT:-${NGINX_DEFAULT_TIMEOUT}}"
@@ -100,6 +101,26 @@ envsubst '${PHP_FPM_ERROR_LOG},${PHP_FPM_LOG_LEVEL}' < /ops/files/php-fpm.conf.t
 
 # Calculate user/group ids and set if required. (Mostly for linux)
 WWW_DATA_DEFAULT=$(id -u www-data)
+
+if [[ -z ${WEB_CONCURRENCY:-} ]]; then
+	bram=$(($(grep MemTotal /proc/meminfo | awk '{print $2}') * 1024))
+	cram=$(($(cat /sys/fs/cgroup/memory/memory.limit_in_bytes) + 0))
+	
+	ram=$((bram < cram ? bram : cram))
+	
+	echo "ram=${ram} bram=${bram} cram=${cram}"
+		
+	# want to get php memory limits from config files as well as env variable in future
+	read WEB_CONCURRENCY php_memory_limit <<<$(php ${php_config:+-c "$php_config"} "util/autotune.php" -y "$fpm_config" -t "$DOCUMENT_ROOT" "$ram")
+	
+	[[ $WEB_CONCURRENCY -lt 1 ]] && WEB_CONCURRENCY=1
+	export WEB_CONCURRENCY
+	
+	echo "${WEB_CONCURRENCY} processes at ${php_memory_limit}B memory limit." >&2
+else
+	echo "Using WEB_CONCURRENCY=${WEB_CONCURRENCY} processes." >&2
+fi
+
 
 if [[ -z "$(ls -n $APPLICATION_ROOT | awk '{print $3}' | grep $WWW_DATA_DEFAULT)" ]]; then
   : ${WWW_DATA_UID=$(ls -ldn /var/app | awk '{print $3}')}
